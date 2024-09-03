@@ -1,0 +1,91 @@
+{
+    "restaurant": {
+        "id": "123456",
+        "name": "Burger World",
+        "location": "1234 Main St, Anytown, USA",
+        "contact_info": {
+            "phone": "123-456-7890",
+            "email": "burger@restaurant.com"
+        }
+    },
+    "tables": [
+        {
+            "id": "1",
+            "qr_code": "qrcode_1.png"
+        },
+        {
+            "id": "2",
+            "qr_code": "qrcode_2.png"
+        }
+    ],
+    "menu": [
+        {
+            "category_id": "burgers",
+            "name": "Burgers",
+            "items": [
+                {
+                    "id": "1",
+                    "name": "Cheeseburger",
+                    "price": 5.99,
+                    "description": "A classic cheeseburger with lettuce, tomato, and onion.",
+                    "customizations": [
+                        {
+                            "type": "Cheese",
+                            "options": [
+                                {"name": "American", "price": 0.50},
+                                {"name": "Cheddar", "price": 0.50},
+                                {"name": "Swiss", "price": 0.50},
+                                {"name": "Pepper Jack", "price": 0.50}
+                            ]
+                        },
+                        {
+                            "type": "Toppings",
+                            "options": [
+                                {"name": "Lettuce", "price": 0.00},
+                                {"name": "Tomato", "price": 0.00},
+                                {"name": "Onion", "price": 0.00},
+                                {"name": "Pickles", "price": 0.00},
+                                {"name": "Bacon", "price": 1.00},
+                                {"name": "Avocado", "price": 1.00}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "2",
+                    "name": "Bacon Cheeseburger",
+                    "price": 6.99,
+                    "description": "A cheeseburger with bacon, lettuce, tomato, and onion."
+                }
+            ]
+        },
+        {
+            "category_id": "sides",
+            "name": "Sides",
+            "items": [
+                {
+                    "id": "3",
+                    "name": "Fries",
+                    "price": 2.99,
+                    "description": "A side of crispy fries.",
+                    "customizations": [
+                        {
+                            "type": "Size",
+                            "options": [
+                                {"name": "Small", "price": 0.00},
+                                {"name": "Medium", "price": 0.50},
+                                {"name": "Large", "price": 1.00}
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": "4",
+                    "name": "Onion Rings",
+                    "price": 3.99,
+                    "description": "A side of crispy onion rings."
+                }
+            ]
+        }
+    ]
+}
