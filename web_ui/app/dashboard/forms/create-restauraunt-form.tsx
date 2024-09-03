@@ -1,110 +1,159 @@
 "use client";
-import { useState } from "react";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import { useSession } from "next-auth/react";
-import { authFetch } from "@/utils/authfetch";
+import { Button } from "@/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
-export default function CreateRestaurantForm() {
-  const { data: session } = useSession(); // Fetch the logged-in user session
-  const [name, setName] = useState("asdasd");
-  const [location, setLocation] = useState("asdad");
-  const [phoneNumber, setPhoneNumber] = useState("asdasd");
-  const [email, setEmail] = useState("asdas@asdasd.com");
-  const [website, setWebsite] = useState("https://aa.com"); // Add state for website
-  const [message, setMessage] = useState("");
+// Define the restaurant form schema
+const restaurantFormSchema = z.object({
+  name: z.string().min(1, { message: "Restaurant name is required" }),
+  location: z.string().min(1, { message: "Location is required" }),
+  phoneNumber: z.string().min(1, { message: "Phone number is required" }),
+  email: z.string().email({ message: "Invalid email address" }),
+  website: z.string().url({ message: "Invalid website URL" }),
+});
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+export default function CreateRestaurantForm({ onSuccess }) {
+  const { data: session } = useSession();
+  const form = useForm<z.infer<typeof restaurantFormSchema>>({
+    resolver: zodResolver(restaurantFormSchema),
+    defaultValues: {
+      name: "",
+      location: "",
+      phoneNumber: "",
+      email: "",
+      website: "",
+    },
+  });
 
-    // Check if session exists and get the logged-in user's ID
+  const onSubmit = async (values: z.infer<typeof restaurantFormSchema>) => {
     if (!session || !session.user) {
-      setMessage("User is not logged in");
+      form.setError("name", { message: "User is not logged in" });
       return;
     }
 
     const token = session.user.token;
     if (!token) {
-      setMessage("User is not logged in");
+      form.setError("name", { message: "User is not logged in" });
       return;
     }
 
     try {
-      const response = await authFetch(
+      const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/restaurants`,
         {
           method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
-            name,
-            location,
-            phone_number: phoneNumber,
-            email,
-            website, // Include website in the submission
+            name: values.name,
+            location: values.location,
+            phone_number: values.phoneNumber,
+            email: values.email,
+            website: values.website,
           }),
-        },
-        token
+        }
       );
 
       if (response.ok) {
-        setMessage("Restaurant added successfully!");
-        // Optionally reset the form fields or close the form
-        setName("");
-        setLocation("");
-        setPhoneNumber("");
-        setEmail("");
-        setWebsite(""); // Reset website field
+        form.reset(); // Reset form fields
+        onSuccess(); // Call the onSuccess callback to inform the parent of success
+        alert("Restaurant added successfully!");
       } else {
         const errorText = await response.text();
-        setMessage(`Failed to add restaurant: ${errorText}`);
+        form.setError("name", {
+          message: `Failed to add restaurant: ${errorText}`,
+        });
       }
-    } catch (error) {
-      setMessage(`Error: ${error.message}`);
+    } catch (error: any) {
+      form.setError("name", { message: `Error: ${error.message}` });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col space-y-4">
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Restaurant Name"
-        required
-        className="p-2 border border-gray-300 rounded"
-      />
-      <input
-        type="text"
-        value={location}
-        onChange={(e) => setLocation(e.target.value)}
-        placeholder="Location"
-        className="p-2 border border-gray-300 rounded"
-      />
-      <input
-        type="text"
-        value={phoneNumber}
-        onChange={(e) => setPhoneNumber(e.target.value)}
-        placeholder="Phone Number"
-        className="p-2 border border-gray-300 rounded"
-      />
-      <input
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email"
-        className="p-2 border border-gray-300 rounded"
-      />
-      <input
-        type="url"
-        value={website}
-        onChange={(e) => setWebsite(e.target.value)}
-        placeholder="Website"
-        className="p-2 border border-gray-300 rounded"
-      />
-      <button
-        type="submit"
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Add Restaurant
-      </button>
-      {message && <p className="text-red-500">{message}</p>}
-    </form>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <FormField
+          control={form.control}
+          name="name"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Restaurant Name</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter restaurant name" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="location"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Location</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter location" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Phone Number</FormLabel>
+              <FormControl>
+                <Input placeholder="Enter phone number" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="email"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Email</FormLabel>
+              <FormControl>
+                <Input type="email" placeholder="Enter email" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="website"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Website</FormLabel>
+              <FormControl>
+                <Input type="url" placeholder="Enter website URL" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Add Restaurant</Button>
+      </form>
+    </Form>
   );
 }

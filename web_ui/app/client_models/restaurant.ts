@@ -13,8 +13,9 @@ interface MenuItem {
 }
 
 interface MenuCategory {
-  category: string;
-  items: MenuItem[];
+  id: number; // Unique identifier for the category
+  name: string; // Name of the menu category (e.g., "Appetizers", "Entrees")
+  restaurantId: number; // ID of the restaurant to which the category belongs
 }
 
 interface Restaurant {

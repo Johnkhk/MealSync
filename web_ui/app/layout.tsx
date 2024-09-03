@@ -23,7 +23,7 @@ export default function RootLayout({
           <div className="flex-1">
             <TooltipProvider>{children}</TooltipProvider>
           </div>
-          <Footer t={null} />
+          {/* <Footer t={null} /> */}
         </div>
       </body>
     </html>

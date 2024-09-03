@@ -16,4 +16,6 @@ func RegisterRoutes(e *echo.Echo, authGroup *echo.Group) {
 
 	// Categories
 	authGroup.GET("/categories", controllers.GetCategories)
+	authGroup.POST("/categories", controllers.CreateCategory)
+	authGroup.DELETE("/categories/:id", controllers.DeleteCategory)
 }

@@ -1,3 +1,9 @@
+-- Drop Customization Options Table
+DROP TABLE IF EXISTS customization_options;
+
+-- Drop Customization Groups Table
+DROP TABLE IF EXISTS customization_groups;
+
 -- Drop Order Item Customizations Table
 DROP TABLE IF EXISTS order_item_customizations;
 
